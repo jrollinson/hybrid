@@ -84,12 +84,13 @@ def trial_logp(value, guess, slip, init, trans, tau_logps):
 
     length, = value.shape
     index_array = np.arange(length)
+    tau_array = np.arange(length+1)
 
-    is_mastered = (np.expand_dims(index_array, axis=1) <
-                   np.expand_dims(tau_logps[:length+1], axis=0))
+    is_mastered = (np.expand_dims(index_array, axis=1) >=
+                   np.expand_dims(tau_array, axis=0))
     p_correct = np.where(is_mastered,
-                         np.expand_dims(guess, axis=1),
-                         np.expand_dims(slip, axis=1))
+                         np.expand_dims(1-slip, axis=1),
+                         np.expand_dims(guess, axis=1))
 
     ps = np.where(np.expand_dims(value, axis=1) == 1,
                   p_correct, 1 - p_correct)
@@ -97,9 +98,9 @@ def trial_logp(value, guess, slip, init, trans, tau_logps):
     logps = np.log(ps)
 
     logps_given_tau = np.sum(logps, axis=0)
-    logps_given_mastered = logps_given_tau[:length] + tau_logps[:length]
+    logps_mastered = logps_given_tau[:length] + tau_logps[:length]
 
-    logp_mastered = logsumexp(logps_given_mastered)
+    logp_mastered = logsumexp(logps_mastered)
     logp_not_mastered = (tau_greater_logp(length-1, init, trans) +
                          logps_given_tau[length])
 
