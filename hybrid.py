@@ -5,18 +5,10 @@ Tracing to Predict Individual Differences in Learning.
 
 import pymc as pm
 import numpy as np
-import pandas as pd
 
 from scipy.misc import logsumexp
 
-import os.path
 import itertools
-
-DATAPATH = 'data/'
-
-DF = pd.read_pickle(os.path.join(DATAPATH, 'glops.pkl'))
-# first_skill = df['skill'][0]
-# df = df[df['skill'] == first_skill]
 
 def skill_to_problem(skills, seq_lengths):
     """
