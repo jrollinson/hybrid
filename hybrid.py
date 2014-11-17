@@ -106,6 +106,33 @@ def trial_logp(value, guess, slip, init, trans, tau_logps):
 
     return np.logaddexp(logp_mastered, logp_not_mastered)
 
+def trial_logp_given_prev_seq(trials, guesses, slips, init, trans):
+    """Log probability of the final trial given the previous trials.
+
+    :trials: The sequences of trials (0s and 1s)
+    :guesses: The guess probabilities for each trial
+    :slips: The slip probabilities for each trial
+    :init: The initial probability of mastery
+    :trans: The probability of transition to mastery
+    :returns: log probability of the final trial given previous trials.
+
+    """
+
+    seq_len, = trials.shape
+    tau_logps = [tau_logp(tau, init, trans) for tau in xrange(seq_len)]
+
+    seq_logp = trial_logp(trials, guesses, slips, init, trans, tau_logps)
+
+    if seq_len == 1:
+        result = seq_logp
+
+    else:
+        prev_seq_logp = trial_logp(trials[:-1], guesses[:-1], slips[:-1], init,
+                                   trans, tau_logps)
+        result = seq_logp - prev_seq_logp
+
+    return result
+
 
 def hybrid_vars(sequence_list, student_list, problems_list):
     """
