@@ -9,5 +9,5 @@ setup(name='hybrid',
       install_requires=[
           'numpy',
           'scipy',
-          'scikit-learn'])
+          'pymc'])
 
